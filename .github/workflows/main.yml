@@ -44,7 +44,7 @@ jobs:
               run: cp CICDTestAPI/appspec.yml deploy/
               
             - name: Copy scrpits
-              run: cp - CICDTestAPI/scripts deploy/
+              run: cp - CICDTestAPI/scripts/start-application.sh deploy/
               
             - name: Make zip file
               run: zip -r ./$GITHUB_SHA.zip deploy/
