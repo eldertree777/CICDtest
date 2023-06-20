@@ -49,5 +49,5 @@ jobs:
       run: aws deploy create-deployment 
         --application-name my-codedeploy-app 
         --deployment-config-name CodeDeployDefault.OneAtATime 
-        --deployment-group-name my-codedeploy0deployment-group 
+        --deployment-group-name my-codedeploy-deployment-group 
         --s3-location bucket=movemovie-s3,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
