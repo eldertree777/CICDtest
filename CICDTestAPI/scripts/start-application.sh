@@ -6,9 +6,9 @@
 REPOSITORY=/home/ubuntu/cicdtest
 cd $REPOSITORY
 
-APP_NAME=cicdtest
-JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
-JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
+APP_NAME=cicd
+JAR_NAME=$(ls $REPOSITORY | grep 'SNAPSHOT.jar' | tail -n 1)
+JAR_PATH=$REPOSITORY/$JAR_NAME
 
 CURRENT_PID=$(pgrep -f $APP_NAME)
 
