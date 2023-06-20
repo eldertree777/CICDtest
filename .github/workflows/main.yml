@@ -39,7 +39,10 @@ jobs:
             # Jar 파일 복사
             - name: Copy Jar
               run: cp CICDTestAPI/target/*.jar deploy/
-
+              
+            - name: Copy appspec
+              run: cp CICDTestAPI/appspec.yml deploy/
+              
             - name: Make zip file
               run: zip -r ./$GITHUB_SHA.zip deploy/
               shell: bash
