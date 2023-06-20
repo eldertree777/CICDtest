@@ -11,6 +11,6 @@ permissions:
       group: ubuntu
 hooks:
     AfterInstall:
-        - location: CICDTestAPI/scripts/start-application.sh
+        - location: /CICDTestAPI/scripts/start-application.sh
           timeout: 300
           runas: ubuntu
