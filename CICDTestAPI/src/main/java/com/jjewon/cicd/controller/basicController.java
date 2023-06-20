@@ -23,4 +23,15 @@ public class basicController {
 
 		return new ResponseEntity<Map<String, Object>>(resultMap, status);
 	}
+	
+	@GetMapping("hello2")
+	public ResponseEntity<Map<String, Object>> hello2() {
+		System.out.println("all");
+		Map<String, Object> resultMap = new HashMap<>();
+		HttpStatus status = null;
+		status = HttpStatus.OK;
+		resultMap.put("BucketList", "hello2");
+
+		return new ResponseEntity<Map<String, Object>>(resultMap, status);
+	}
 }
