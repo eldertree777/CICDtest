@@ -5,17 +5,26 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+    
+env:
+  AWS_REGION: ap-northeast-2
+  S3_BUCKET_NAME: movemovie-s3
+  CODE_DEPLOY_APPLICATION_NAME: my-codedeploy-app 
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: my-codedeploy-deployment-group
 
+permissions:
+  contents: read
+  
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     
     - name: Set up JDK 8
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         java-version: '8'
         distribution: 'temurin'
@@ -34,20 +43,24 @@ jobs:
     - name: Make zip file
       run: zip -r ./CICDTest.zip deploy/
       shell: bash 
-      
+    
+    # (4) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-northeast-2
-      
+    
+    # (5) 빌드 결과물을 S3 버킷에 업로드
     - name: Upload deployment package to S3 
       run: aws s3 cp ./CICDTest.zip s3://movemovie-s3/CICDTest.zip
-
-    - name: Code Deploy
-      run: aws deploy create-deployment 
-        --application-name my-codedeploy-app 
-        --deployment-config-name CodeDeployDefault.OneAtATime 
-        --deployment-group-name my-codedeploy-deployment-group 
-        --s3-location bucket=movemovie-s3,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
+    
+    # (6) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
+    - name: Deploy to AWS EC2 from S3
+      run: |
+        aws deploy create-deployment \
+          --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+          --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip
