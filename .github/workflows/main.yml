@@ -46,4 +46,8 @@ jobs:
       run: aws s3 cp ./CICDTest.zip s3://movemovie-s3/CICDTest.zip
 
     - name: Code Deploy
-      run: aws deploy create-deployment --application-name $CODE_DEPLOY_APP_NAME --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name $DEPLOYMENT_GROUP_NAME --s3-location bucket=$BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
+      run: aws deploy create-deployment 
+        --application-name my-codedeploy-app 
+        --deployment-config-name CodeDeployDefault.OneAtATime 
+        --deployment-group-name my-codedeploy0deployment-group 
+        --s3-location bucket=movemovie-s3,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
