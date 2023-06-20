@@ -29,8 +29,8 @@ jobs:
         
     # Jar 파일 복사
     - name: Copy Jar
-      run: cp CICDTESTAPI/target/*.jar deploy/
+      run: cp CICDTestAPI/target/*.jar deploy/
 
     - name: Make zip file
-      run: zip -r ./test.zip deploy/
+      run: zip -r ./CICDTest.zip deploy/
       shell: bash
