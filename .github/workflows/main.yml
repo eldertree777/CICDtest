@@ -41,7 +41,7 @@ jobs:
               run: cp CICDTestAPI/target/*.jar deploy/
 
             - name: Make zip file
-              run: zip -r ./cicdtest.zip deploy/
+              run: zip -r ./$GITHUB_SHA.zip deploy/
               shell: bash
 
             # (4) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
@@ -54,7 +54,7 @@ jobs:
 
             # (5) 빌드 결과물을 S3 버킷에 업로드
             - name: Upload deployment package to S3
-              run: aws s3 cp ./cicdtest.zip s3://movemovie-s3/cicdtest.zip
+              run: aws s3 cp ./$GITHUB_SHA.zip s3://movemovie-s3/$GITHUB_SHA.zip
 
             # (6) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
             - name: Code Deploy
@@ -62,4 +62,4 @@ jobs:
                   --application-name $CODE_DEPLOY_APPLICATION_NAME
                   --deployment-config-name CodeDeployDefault.OneAtATime
                   --deployment-group-name $CODE_DEPLOY_DEPLOYMENT_GROUP_NAME
-                  --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME
+                  --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip
