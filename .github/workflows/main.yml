@@ -2,9 +2,9 @@ name: statrip ci
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -21,7 +21,7 @@ jobs:
         distribution: 'temurin'
         
     - name: Build with Maven
-      run: mvn -f CICDTESTAPI/pom.xml clean package
+      run: mvn -f CICDTestAPI/pom.xml clean package
       
     # 디렉토리 생성
     - name: Make Directory
@@ -29,8 +29,25 @@ jobs:
         
     # Jar 파일 복사
     - name: Copy Jar
-      run: cp CICDTESTAPI/target/*.jar deploy/
+      run: cp CICDTestAPI/target/*.jar deploy/
 
     - name: Make zip file
-      run: zip -r ./test.zip deploy/
-      shell: bash
+      run: zip -r ./CICDTest.zip deploy/
+      shell: bash 
+      
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-2
+      
+    - name: Upload deployment package to S3 
+      run: aws s3 cp ./CICDTest.zip s3://movemovie-s3/CICDTest.zip
+
+    - name: Code Deploy
+      run: aws deploy create-deployment 
+        --application-name my-codedeploy-app 
+        --deployment-config-name CodeDeployDefault.OneAtATime 
+        --deployment-group-name my-codedeploy-deployment-group 
+        --s3-location bucket=movemovie-s3,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
