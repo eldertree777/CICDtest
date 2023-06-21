@@ -1,4 +1,4 @@
-name: statrip ci
+name: ci/cd test
 
 on:
     push:
